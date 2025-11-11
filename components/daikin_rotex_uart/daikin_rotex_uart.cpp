@@ -31,14 +31,19 @@ void DaikinRotexUARTComponent::setup() {
 }
 
 void DaikinRotexUARTComponent::loop() {
+    // Sende die nächste Anfrage an die Daikin-Einheit
     m_message_manager.sendNextRequest(*this);
 
-    uint8_t byte;
-    while (this->read_byte(&byte)) {
-        // Übergib das Byte an den MessageManager
-        m_message_manager.handleResponse(*this);
+    // Eingehende Bytes prüfen und verarbeiten
+    while (this->available() > 0) {
+        uint8_t byte;
+        if (this->read_byte(&byte)) {
+            // Übergib das Byte an den MessageManager zur Dekodierung
+            m_message_manager.handleResponse(*this);
+        }
     }
 
+    // Später geplante Aufrufe ausführen
     for (auto it = m_later_calls.begin(); it != m_later_calls.end();) {
         if (millis() > it->second) {
             it->first();
