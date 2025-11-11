@@ -33,11 +33,13 @@ void DaikinRotexUARTComponent::setup() {
 void DaikinRotexUARTComponent::loop() {
     m_message_manager.sendNextRequest(*this);
 
-    if (available() > 0) {
+    uint8_t byte;
+    while (this->read_byte(&byte)) {
+        // Übergib das Byte an den MessageManager
         m_message_manager.handleResponse(*this);
     }
 
-    for (auto it = m_later_calls.begin(); it != m_later_calls.end(); ) {
+    for (auto it = m_later_calls.begin(); it != m_later_calls.end();) {
         if (millis() > it->second) {
             it->first();
             it = m_later_calls.erase(it);
