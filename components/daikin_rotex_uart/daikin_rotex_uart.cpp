@@ -3,6 +3,8 @@
 #include "esphome/components/daikin_rotex_uart/request.h"
 #include "esphome/components/daikin_rotex_uart/utils.h"
 #include "esphome/components/uart/uart.h"
+#include "esphome/components/daikin_rotex_uart/sensors.h"   // wichtig: damit register_entities bekannt ist
+
 
 #include <algorithm>
 #include <memory>
@@ -31,7 +33,13 @@ void DaikinRotexUARTComponent::add_entity(EntityBase* pEntityBase) {
 
 
 void DaikinRotexUARTComponent::setup() {
-    m_project_git_hash_sensor->publish_state(m_project_git_hash);
+    // Projekt-Hash publizieren
+    if (m_project_git_hash_sensor != nullptr) {
+        m_project_git_hash_sensor->publish_state(m_project_git_hash);
+    }
+
+    // >>> Hier die Entities registrieren <<<
+    register_entities(this);
 }
 
 void DaikinRotexUARTComponent::loop() {
