@@ -20,11 +20,22 @@ DaikinRotexUARTComponent::DaikinRotexUARTComponent()
 {
 }
 
+
+
 void DaikinRotexUARTComponent::add_entity(EntityBase* pEntityBase) {
-    if (TEntity* pEntity = dynamic_cast<TEntity*>(pEntityBase)) {
+    if (auto pSensor = dynamic_cast<UartSensor*>(pEntityBase)) {
+        m_message_manager.add(pSensor);
+    } else if (auto pTextSensor = dynamic_cast<UartTextSensor*>(pEntityBase)) {
+        m_message_manager.add(pTextSensor);
+    } else if (auto pBinarySensor = dynamic_cast<UartBinarySensor*>(pEntityBase)) {
+        m_message_manager.add(pBinarySensor);
+    } else if (auto pEntity = dynamic_cast<TEntity*>(pEntityBase)) {
+        // Fallback: falls es nur ein TEntity ist
         m_message_manager.add(pEntity);
     }
 }
+
+
 
 void DaikinRotexUARTComponent::setup() {
     m_project_git_hash_sensor->publish_state(m_project_git_hash);
