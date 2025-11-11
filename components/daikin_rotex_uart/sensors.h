@@ -9,6 +9,9 @@
 
 namespace esphome {
 namespace daikin_rotex_uart {
+    class DaikinRotexUARTComponent; // Forward declaration
+
+void register_entities(DaikinRotexUARTComponent *component);
 
 /////////////////////// UartSensor ///////////////////////
 
