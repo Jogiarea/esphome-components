@@ -23,15 +23,14 @@ DaikinRotexUARTComponent::DaikinRotexUARTComponent()
 
 
 void DaikinRotexUARTComponent::add_entity(EntityBase* pEntityBase) {
-    if (auto pSensor = dynamic_cast<UartSensor*>(pEntityBase)) {
+    if (auto pSensor = dynamic_cast<daikin_rotex_uart::UartSensor*>(pEntityBase)) {
         m_message_manager.add(pSensor);
-    } else if (auto pTextSensor = dynamic_cast<UartTextSensor*>(pEntityBase)) {
+    } else if (auto pTextSensor = dynamic_cast<daikin_rotex_uart::UartTextSensor*>(pEntityBase)) {
         m_message_manager.add(pTextSensor);
-    } else if (auto pBinarySensor = dynamic_cast<UartBinarySensor*>(pEntityBase)) {
+    } else if (auto pBinarySensor = dynamic_cast<daikin_rotex_uart::UartBinarySensor*>(pEntityBase)) {
         m_message_manager.add(pBinarySensor);
-    } else if (auto pEntity = dynamic_cast<TEntity*>(pEntityBase)) {
-        // Fallback: falls es nur ein TEntity ist
-        m_message_manager.add(pEntity);
+    } else if (auto pEntity = dynamic_cast<daikin_rotex_uart::TEntity*>(pEntityBase)) {
+        m_message_manager.add(pEntity); // Fallback
     }
 }
 
