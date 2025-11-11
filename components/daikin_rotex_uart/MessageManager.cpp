@@ -33,6 +33,7 @@ void TMessageManager::add(TEntity* pEntity) {
 bool TMessageManager::sendNextRequest(uart::UARTDevice& device) {
     std::shared_ptr<TRequest> pRequest = getNextRequestToSend();
     if (pRequest != nullptr) {
+         ESP_LOGI(TAG, "TX: Sende Request für Registry %02X", pRequest->getRegistryId());  // <--- Debug
         return pRequest->send(device);
     }
     return false;
@@ -40,6 +41,7 @@ bool TMessageManager::sendNextRequest(uart::UARTDevice& device) {
 
 void TMessageManager::handleResponse(uart::UARTDevice& device) {
     std::string log_message = m_buffer.read(device);
+    ESP_LOGD(TAG, "RX: Rohdaten %s", Utils::to_hex(m_buffer.data(), m_buffer.size()).c_str());  // <--- Debug
 
     if (m_buffer.size() >= 2 && m_buffer[0] == 0x15 && m_buffer[1] == 0xEA) {
         ESP_LOGW(TAG, "RX: Invalid request => data: %s", Utils::to_hex(m_buffer.data(), 2).c_str());
