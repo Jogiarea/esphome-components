@@ -1,5 +1,6 @@
 #include "esphome/components/daikin_rotex_uart/sensors.h"
 #include "esphome/components/daikin_rotex_uart/entity.h"
+#include "esphome/components/daikin_rotex_uart/daikin_rotex_uart.h"
 
 namespace esphome {
 namespace daikin_rotex_uart {
@@ -44,5 +45,84 @@ bool UartBinarySensor::handleValue(uint16_t value, TEntity::TVariant& current) {
     return true;
 }
 
+
+
+/////////////////////// Entities registrieren ///////////////////////
+
+void register_entities(DaikinRotexUARTComponent *component) {
+    // Flüssigkeitsleitung Temperatur
+    auto t_liq = new UartSensor();
+    t_liq->set_entity(TEntity::TEntityArguments(
+        t_liq, "Temperatur Flüssigkeitsleitung",
+        0x10, 0, false, 2, TEntity::Endian::Little,
+        10.0, 1, {}, false
+    ));
+    component->add_entity(t_liq);
+
+    // Rücklauftemperatur
+    auto tr = new UartSensor();
+    tr->set_entity(TEntity::TEntityArguments(
+        tr, "Rücklauftemperatur",
+        0x20, 0, false, 2, TEntity::Endian::Little,
+        10.0, 1, {}, false
+    ));
+    component->add_entity(tr);
+
+    // Vorlauftemperatur
+    auto tv = new UartSensor();
+    tv->set_entity(TEntity::TEntityArguments(
+        tv, "Vorlauftemperatur",
+        0x22, 0, false, 2, TEntity::Endian::Little,
+        10.0, 1, {}, false
+    ));
+    component->add_entity(tv);
+
+    // Außentemperatur
+    auto outdoor_temp = new UartSensor();
+    outdoor_temp->set_entity(TEntity::TEntityArguments(
+        outdoor_temp, "Außentemperatur",
+        0x30, 0, false, 2, TEntity::Endian::Little,
+        10.0, 1, {}, false
+    ));
+    component->add_entity(outdoor_temp);
+
+    // Betriebsart (Textsensor)
+    auto mode = new UartTextSensor();
+    mode->set_entity(TEntity::TEntityArguments(
+        mode, "Betriebsart (UART)",
+        0x21, 0, false, 1, TEntity::Endian::Little,
+        1.0, 0, {}, false
+    ));
+    mode->set_map("0=Standby;1=Heizen;2=Kühlen;3=Warmwasser");
+    component->add_entity(mode);
+
+    // Heizstab Stufe 1
+    auto buh1 = new UartBinarySensor();
+    buh1->set_entity(TEntity::TEntityArguments(
+        buh1, "Heizstab Stufe 1",
+        0x60, 0, false, 1, TEntity::Endian::Little,
+        1.0, 0, {}, false
+    ));
+    component->add_entity(buh1);
+
+    // Heizstab Stufe 2
+    auto buh2 = new UartBinarySensor();
+    buh2->set_entity(TEntity::TEntityArguments(
+        buh2, "Heizstab Stufe 2",
+        0x61, 0, false, 1, TEntity::Endian::Little,
+        1.0, 0, {}, false
+    ));
+    component->add_entity(buh2);
+
+    // Abtauvorgang
+    auto defrost = new UartBinarySensor();
+    defrost->set_entity(TEntity::TEntityArguments(
+        defrost, "Abtauvorgang",
+        0x70, 0, false, 1, TEntity::Endian::Little,
+        1.0, 0, {}, false
+    ));
+    component->add_entity(defrost);
 }
-}
+
+} // namespace daikin_rotex_uart
+} // namespace esphome
